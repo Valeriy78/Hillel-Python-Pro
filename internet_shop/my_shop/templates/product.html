@@ -1,0 +1,20 @@
+{% extends 'base.html'%}
+
+{% block title %}{{info.slug}}{% endblock %}
+
+{% block container %}
+    <h2>Information about product</h2>
+    <p><b>product:</b> {{info.product}}</p>
+    <p><b>available:</b> {{info.available}}</p>
+    <p><b>description:</b> {{info.description}}</p>
+    <p><b>price:</b> {{info.price}}</p>
+    {% if info.available %}
+        <form action="">
+        <input type="submit" value="Buy" style="padding: 10px; font-size: medium">
+        </form>
+    {% else %}
+        <form action="">
+        <input type="submit" value="Buy" style="padding: 10px; font-size: medium" disabled>
+        </form>
+    {% endif %}
+{% endblock %}
