@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'my_shop.apps.MyShopConfig'
+    'my_shop.apps.MyShopConfig',
+    'user.apps.UserConfig',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,7 @@ ROOT_URLCONF = 'internet_shop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['internet_shop/templates', 'user/templates', 'my_shop/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

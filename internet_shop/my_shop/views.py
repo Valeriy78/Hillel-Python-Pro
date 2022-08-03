@@ -21,27 +21,12 @@ products = [
     },
 ]
 
-user = {
-    "id": 1,
-    "username": "shorodilov",
-    "first_name": "Serhii",
-    "last_name": "Horodilov"
-}
-
 
 def homepage(request: HttpRequest) -> HttpResponse:
-    products_list = []
-    for item in products:
-        products_list.append({'product': item['product'], 'slug': item['slug']})
-    return render(request, 'homepage.html', {'products_list': products_list})
+    return render(request, 'homepage.html', {'products_list': products})
 
 
 def product(request: HttpRequest, product: str) -> HttpResponse:
     for item in products:
         if item['slug'] == product:
-            info = item
-    return render(request, 'product.html', {'info': info})
-
-
-def user_profile(request: HttpRequest) -> HttpResponse:
-    return render(request, 'user.html', user)
+            return render(request, 'product.html', {'info': item})
