@@ -1,4 +1,4 @@
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import render
 
 
@@ -30,3 +30,4 @@ def product(request: HttpRequest, product: str) -> HttpResponse:
     for item in products:
         if item['slug'] == product:
             return render(request, 'product.html', {'info': item})
+    raise Http404('No such product')

@@ -8,9 +8,11 @@
     <p><b>available:</b> {{info.available}}</p>
     <p><b>description:</b> {{info.description}}</p>
     <p><b>price:</b> {{info.price}}</p>
-    {% if info.available %}
-        <input type="submit" value="Buy" style="padding: 10px; font-size: medium">
-    {% else %}
-        <input type="submit" value="Buy" style="padding: 10px; font-size: medium" disabled>
-    {% endif %}
+    <form action="">
+        {% if info.available %}
+            <input type="submit" value="Buy" style="padding: 10px; font-size: medium">
+        {% else %}
+            <input type="submit" value="Buy" style="padding: 10px; font-size: medium" disabled>
+        {% endif %}
+    </form>
 {% endblock %}

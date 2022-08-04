@@ -12,4 +12,3 @@ user = {
 
 def user_profile(request: HttpRequest) -> HttpResponse:
     return render(request, 'user.html', user)
-

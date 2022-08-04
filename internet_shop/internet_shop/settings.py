@@ -57,7 +57,7 @@ ROOT_URLCONF = 'internet_shop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['internet_shop/templates', 'user/templates', 'my_shop/templates'],
+        'DIRS': [BASE_DIR/'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
