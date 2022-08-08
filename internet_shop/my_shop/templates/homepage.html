@@ -6,7 +6,7 @@
     <h2>Products:</h2>
     <ul>
         {% for item in products_list %}
-            <li><a href="{% url 'product' item.slug %}">{{ item.product }}</a></li>
+            <li><a href="{% url 'product' item.slug %}">{{ item.name }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}
