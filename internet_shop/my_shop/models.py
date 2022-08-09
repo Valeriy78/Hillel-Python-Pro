@@ -1,7 +1,13 @@
+"""
+My_shop application models
+"""
+
 from django.db import models
 
 
 class Category(models.Model):
+    """Category model implementation"""
+
     slug = models.SlugField(max_length=64)
     name = models.CharField(max_length=64)
     description = models.TextField()
@@ -11,6 +17,8 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    """Product model implementation"""
+
     slug = models.SlugField(max_length=64)
     name = models.CharField(max_length=64)
     price = models.DecimalField(max_digits=10, decimal_places=2)
