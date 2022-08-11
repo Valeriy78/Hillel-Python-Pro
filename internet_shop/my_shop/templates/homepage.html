@@ -3,10 +3,26 @@
 {% block title %}Homepage{% endblock %}
 
 {% block container %}
+    <form action="{% url 'homepage' %}" method="get">
+        <label for="select_category">Select category:</label>
+        <select name="category" id="select_category">
+            <option value="" selected>All</option>
+            {% for item in categories_list %}
+                <option value="{{item.slug}}">{{item.name}}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Select">
+    </form>
+
     <h2>Products:</h2>
     <ul>
         {% for item in products_list %}
-            <li><a href="{% url 'product' item.slug %}">{{ item.product }}</a></li>
+            <li>
+                <a href="{% url 'product' item.slug %}">{{ item.name }}</a>
+                {% if not item.quantity %}
+                   not available
+                {% endif %}
+            </li>
         {% endfor %}
     </ul>
 {% endblock %}
