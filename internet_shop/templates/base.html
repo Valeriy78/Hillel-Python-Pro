@@ -8,8 +8,9 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
+    <header>Active user: {{user}}</header>
     <h1>My internet shop</h1>
-    {% include '_navbar.html' %}
+    {% include '_navbar.html' with username=user.username %}
     <hr>
     <div>{% block container %}{% endblock %}</div>
 </body>
