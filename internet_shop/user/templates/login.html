@@ -5,10 +5,7 @@
 {% block container %}
   <form method="post">
     {% csrf_token %}
-    <label for="username">Username: </label>
-    <input id="username" name="username" type="text"><br><br>
-    <label for="password">Password: </label>
-    <input id="password" name="password" type="password"><br><br>
+    {{ form.as_p }}
     <input type="submit" value="Submit">
   </form>
 {% endblock %}

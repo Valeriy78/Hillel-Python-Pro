@@ -3,53 +3,50 @@ User application views
 """
 
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
+from .forms import RegisterForm, LoginForm, ProfileEditForm
 
+
+@login_required(login_url=reverse_lazy("login"))
 def user_profile(request: HttpRequest) -> HttpResponse:
     """User profile view implementation"""
 
-    if request.user.is_authenticated:
-        return render(request, "user.html")
-    return HttpResponseRedirect(reverse_lazy("login"))
+    return render(request, "user.html")
 
 
 def register_view(request: HttpRequest) -> HttpResponse:
     """Register user view"""
 
     if request.method == "POST":
-        username = request.POST["username"]
-        if User.objects.filter(username=username):
-            return HttpResponseRedirect(reverse_lazy("register"))
-
-        password1 = request.POST["password1"]
-        password2 = request.POST["password2"]
-        if password1 == password2:
-            User.objects.create_user(username=username, password=password1)
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.create_user()
             return HttpResponseRedirect(reverse_lazy("login"))
-        return HttpResponseRedirect(reverse_lazy("register"))
+    else:
+        form = RegisterForm()
 
-    return render(request, "register.html")
+    return render(request, "register.html", {"form": form})
 
 
 def login_view(request: HttpRequest) -> HttpResponse:
     """Login user view"""
 
     if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(username=username, password=password)
-        if user is None:
-            return HttpResponseRedirect(reverse_lazy("login"))
-        login(request, user)
-        return HttpResponseRedirect(reverse_lazy("homepage"))
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            login(request, form.user)
+            return HttpResponseRedirect(reverse_lazy("homepage"))
+    else:
+        form = LoginForm()
 
-    return render(request, "login.html")
+    return render(request, "login.html", {"form": form})
 
 
+@login_required(login_url=reverse_lazy("login"))
 def logout_view(request: HttpRequest) -> HttpResponse:
     """Logout user view"""
 
@@ -57,6 +54,7 @@ def logout_view(request: HttpRequest) -> HttpResponse:
     return HttpResponseRedirect(reverse_lazy("homepage"))
 
 
+@login_required(login_url=reverse_lazy("login"))
 def deactivate_view(request: HttpRequest) -> HttpResponse:
     """Deactivate user view"""
 
@@ -64,3 +62,24 @@ def deactivate_view(request: HttpRequest) -> HttpResponse:
     request.user.save()
     logout(request)
     return HttpResponseRedirect(reverse_lazy("homepage"))
+
+
+@login_required(login_url=reverse_lazy("login"))
+def profile_edit_view(request: HttpRequest) -> HttpResponse:
+    """Edit user profile"""
+
+    user = request.user
+    if request.method == "POST":
+        form = ProfileEditForm(request.POST)
+        if form.is_valid():
+            user.first_name = form.get_items()["first_name"]
+            user.last_name = form.get_items()["last_name"]
+            user.email = form.get_items()["email"]
+            user.save()
+            return HttpResponseRedirect(reverse_lazy("user"))
+    else:
+        first_name = user.first_name
+        last_name = user.last_name
+        email = user.email
+        form = ProfileEditForm({"first_name": first_name, "last_name": last_name, "email": email})
+    return render(request, "profile_edit.html", {"form": form})
