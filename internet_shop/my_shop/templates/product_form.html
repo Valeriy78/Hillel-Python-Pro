@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %} Product Form {% endblock %}
+
+{% block container %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save"><br><br>
+    <a href="{% url 'homepage' %}" class="btn btn-danger">Cancel</a>
+  </form>
+{% endblock %}
