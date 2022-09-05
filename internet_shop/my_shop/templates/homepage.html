@@ -14,9 +14,14 @@
         <input type="submit" value="Select">
     </form>
 
+    {% if user.is_authenticated %}
+        <br><b><a href="{% url 'create_product' %}">Create new product</a></b>
+        <br><br><b><a href="{% url 'create_category' %}">Create new category</a></b>
+    {% endif %}
+
     <h2>Products:</h2>
     <ul>
-        {% for item in products_list %}
+        {% for item in object_list %}
             <li>
                 <a href="{% url 'product' item.slug %}">{{ item.name }}</a>
                 {% if not item.quantity %}
@@ -25,4 +30,5 @@
             </li>
         {% endfor %}
     </ul>
+
 {% endblock %}

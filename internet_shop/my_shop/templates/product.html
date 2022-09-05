@@ -1,19 +1,26 @@
 {% extends 'base.html' %}
 
-{% block title %}{{info.slug}}{% endblock %}
+{% block title %}{{object.slug}}{% endblock %}
 
 {% block container %}
     <h2>Information about product</h2>
-    <p><b>product:</b> {{info.name}}</p>
-    <p><b>price:</b> {{info.price}}</p>
-    <p><b>quantity:</b> {{info.quantity}}</p>
-    <p><b>category:</b> {{info.category}}</p>
+    <p><b>product:</b> {{object.name}}</p>
+    <p><b>price:</b> {{object.price}}</p>
+    <p><b>quantity:</b> {{object.quantity}}</p>
+    <p><b>category:</b> {{object.category}}</p>
 
     <form action="">
-        {% if info.quantity %}
+        {% if object.quantity %}
             <input type="submit" value="Buy" style="padding: 10px; font-size: medium">
         {% else %}
             <input type="submit" value="Buy" style="padding: 10px; font-size: medium" disabled>
         {% endif %}
     </form>
+
+    {% if user.is_authenticated %}
+        <br><br>
+        <b><a href="{% url 'update_product' object.slug %}">Update</a></b><br><br>
+        <b><a href="{% url 'delete_product' object.slug %}" style="color: red">Delete</a></b>
+    {% endif %}
+
 {% endblock %}
