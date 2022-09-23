@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+
     'my_shop.apps.MyShopConfig',
     'user.apps.UserConfig',
     'purchase.apps.PurchaseConfig',
