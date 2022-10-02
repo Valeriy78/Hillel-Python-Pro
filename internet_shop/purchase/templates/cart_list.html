@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %} Cart content {% endblock %}
+
+{% block container %}
+
+   <h2>Cart content (quantity):</h2>
+    <ul>
+        {% for item in object_list %}
+            <li>
+                {{ item }} ( <b>{{ item.quantity }}</b> )
+                <a href="{% url 'delete_from_cart' item.id %}">Cancel</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <br><br>
+    <div><b>Total cost:</b> {{ total_cost }}</div>
+
+    <br><br>
+    <form action="{% url 'purchase' cart_id %}">
+        <input type="submit" value="Buy" style="padding: 10px; font-size: medium">
+    </form>
+
+{% endblock %}
