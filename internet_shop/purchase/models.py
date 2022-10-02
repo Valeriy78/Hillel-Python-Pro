@@ -69,6 +69,9 @@ class Order(models.Model):
 class OrderReturn(models.Model):
     """User's order return implementation"""
 
+    CHOICES = [('CONFIRM', 'confirm'),
+               ('REJECT', 'reject')]
+
     customer = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

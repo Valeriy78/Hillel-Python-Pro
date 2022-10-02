@@ -13,8 +13,8 @@ from internet_shop.decorators import is_staff, is_not_staff
 
 
 @require_http_methods(["GET", "POST"])
-@is_not_staff
 @login_required
+@is_not_staff
 def cart_item_create_view(request: HttpRequest, slug) -> HttpResponse:
     """CartItem create view implementation"""
 
@@ -39,8 +39,8 @@ def cart_item_create_view(request: HttpRequest, slug) -> HttpResponse:
     return render(request, "add_to_cart.html", {"form": form})
 
 
-@is_not_staff
 @login_required
+@is_not_staff
 def cart_item_delete_view(request: HttpRequest, pk: int) -> HttpResponse:
     """CartItem delete view implementation"""
 
@@ -52,8 +52,8 @@ def cart_item_delete_view(request: HttpRequest, pk: int) -> HttpResponse:
     return HttpResponseRedirect(reverse_lazy("cart_list"))
 
 
-@is_not_staff
 @login_required
+@is_not_staff
 def cart_list_view(request: HttpRequest) -> HttpResponse:
     """Cart content list view implementation"""
 
@@ -65,8 +65,8 @@ def cart_list_view(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET", "POST"])
-@is_not_staff
 @login_required
+@is_not_staff
 def purchase_view(request: HttpRequest, pk: int) -> HttpResponse:
     """
     Customer's order create view implementation.
@@ -116,8 +116,8 @@ def purchase_view(request: HttpRequest, pk: int) -> HttpResponse:
         return render(request, "confirm_purchase.html")
 
 
-@is_not_staff
 @login_required
+@is_not_staff
 def order_list_view(request: HttpRequest) -> HttpResponse:
     """Order list view implementation"""
 
@@ -126,8 +126,8 @@ def order_list_view(request: HttpRequest) -> HttpResponse:
     return render(request, "order_list.html", context)
 
 
-@is_not_staff
 @login_required
+@is_not_staff
 def order_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
     """Order detail view implementation"""
 
@@ -140,8 +140,8 @@ def order_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
 
 
 @require_http_methods(["GET", "POST"])
-@is_not_staff
 @login_required
+@is_not_staff
 def order_return_request_view(request: HttpRequest, pk: int) -> HttpResponse:
     """Implementation of the order return request view"""
 
@@ -151,17 +151,22 @@ def order_return_request_view(request: HttpRequest, pk: int) -> HttpResponse:
         raise Http404("The order not found")
 
     customer = order.customer
+    redirect_url = reverse_lazy("order_list")
 
     if request.method == "POST":
-        order_return = OrderReturn(customer=customer, order=order)
-        order_return.save()
-        return HttpResponseRedirect(reverse_lazy("order_list"))
+        try:
+            if OrderReturn.objects.get(customer=customer, order=order):
+                return HttpResponseRedirect(redirect_url)
+        except OrderReturn.DoesNotExist:
+            order_return = OrderReturn(customer=customer, order=order)
+            order_return.save()
+            return HttpResponseRedirect(redirect_url)
     else:
         return render(request, "request_order_return.html")
 
 
-@is_staff
 @login_required
+@is_staff
 def order_return_list_view(request: HttpRequest) -> HttpResponse:
     """Implementation of the order return list view"""
 
@@ -169,8 +174,8 @@ def order_return_list_view(request: HttpRequest) -> HttpResponse:
     return render(request, "order_return_list.html", context)
 
 
-@is_staff
 @login_required
+@is_staff
 def order_return_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
     """Implementation of the order return detail view"""
 
@@ -184,8 +189,8 @@ def order_return_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
 
 
 @require_http_methods(["GET", "POST"])
-@is_staff
 @login_required
+@is_staff
 def confirm_order_return_view(request: HttpRequest, pk: int) -> HttpResponse:
     """
     Implementation of the order return request confirmation view.
