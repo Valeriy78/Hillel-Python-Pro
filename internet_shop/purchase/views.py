@@ -70,46 +70,28 @@ def cart_list_view(request: HttpRequest) -> HttpResponse:
 def purchase_view(request: HttpRequest, pk: int) -> HttpResponse:
     """
     Customer's order create view implementation.
-    After the purchase confirmation:
-    1. Calculates the total cost of products.
-    2. Gets from the user's account an amount of money equal to the total cost.
-    3. Creates new order object.
-    4. Diminishes the quantity of products that have been purchased.
-    5. Current user's cart becomes inactual.
-    6. Creates new actual cart for the user.
     """
 
     try:
         cart = Cart.objects.get(id=pk)
     except Cart.DoesNotExist:
         raise Http404("The cart not found")
+
     customer = cart.customer
-    redirect_url = reverse_lazy("homepage")
     cart_items = cart.items.all()
+    redirect_url = reverse_lazy("homepage")
     if cart_items.count() == 0:
         return HttpResponseRedirect(redirect_url)
 
     if request.method == "POST":
 
         total_cost = cart.calculate_sum()
-        if total_cost <= customer.money:
-            customer.get_money(total_cost)
-        else:
+        if total_cost > customer.money:
             message = "You have not enough money!"
             return render(request, "confirm_purchase.html", {"message": message})
 
         new_order = Order(customer=customer, cart=cart)
         new_order.save()
-
-        for item in cart_items:
-            product = item.product
-            quantity = item.quantity
-            product.decrease_quantity(quantity)
-
-        cart.make_inactual()
-        new_cart = Cart(customer=customer)
-        new_cart.save()
-
         return HttpResponseRedirect(redirect_url)
 
     else:
@@ -194,19 +176,13 @@ def order_return_detail_view(request: HttpRequest, pk: int) -> HttpResponse:
 def confirm_order_return_view(request: HttpRequest, pk: int) -> HttpResponse:
     """
     Implementation of the order return request confirmation view.
-    After the request confirmation:
-    1. Returns money to the customer.
-    2. The quantity of products returns to the previous values.
-    3. The order status becomes 'Cancelled'.
-    Removes the return order instance if the request is rejected.
     """
 
     try:
         order_return = OrderReturn.objects.get(id=pk)
     except OrderReturn.DoesNotExist:
         raise Http404("The order return request not found")
-    customer = order_return.customer
-    order = order_return.order
+
     redirect_url = reverse_lazy("return_order_list")
 
     if request.method == "POST":
@@ -216,20 +192,9 @@ def confirm_order_return_view(request: HttpRequest, pk: int) -> HttpResponse:
             decision = form.cleaned_data["decision"]
 
             if decision == "CONFIRM":
-                total_cost = order.cart.calculate_sum()
-                customer.add_money(total_cost)
-
-                order_items = order.cart.items.all()
-                for item in order_items:
-                    product = item.product
-                    quantity = item.quantity
-                    product.increase_quantity(quantity)
-
-                order.cancel()
                 order_return.confirm()
-
             else:
-                order_return.delete()
+                order_return.reject()
 
             return HttpResponseRedirect(redirect_url)
 
