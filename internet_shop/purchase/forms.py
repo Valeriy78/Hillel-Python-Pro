@@ -6,10 +6,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from my_shop.models import Product
-
-
-CHOICES = [('CONFIRM', 'confirm'),
-           ('REJECT', 'reject')]
+from purchase.models import OrderReturn
 
 
 class CartItemForm(forms.Form):
@@ -30,4 +27,4 @@ class CartItemForm(forms.Form):
 class ConfirmForm(forms.Form):
     """Form for admin to confirm or reject"""
 
-    decision = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect)
+    decision = forms.ChoiceField(choices=OrderReturn.CHOICES, widget=forms.RadioSelect)

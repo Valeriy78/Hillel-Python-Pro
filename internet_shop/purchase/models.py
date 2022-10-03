@@ -65,9 +65,42 @@ class Order(models.Model):
         self.status = 'CANCELLED'
         self.save()
 
+    def save(self, **kwargs):
+        """
+        After the purchase confirmation:
+        1. Calculates the total cost of products.
+        2. Gets from the user's account an amount of money equal to the total cost.
+        3. Diminishes the quantity of products that have been purchased.
+        4. Current user's cart becomes inactual.
+        5. Creates new actual cart for the user.
+        6. Creates new order object.
+        """
+
+        if not self.id:
+            cart = self.cart
+            customer = self.customer
+            cart_items = cart.items.all()
+
+            total_cost = cart.calculate_sum()
+            customer.get_money(total_cost)
+
+            for item in cart_items:
+                product = item.product
+                quantity = item.quantity
+                product.decrease_quantity(quantity)
+
+            cart.make_inactual()
+            new_cart = Cart(customer=customer)
+            new_cart.save()
+
+        super().save(**kwargs)
+
 
 class OrderReturn(models.Model):
     """User's order return implementation"""
+
+    CHOICES = [('CONFIRM', 'confirm'),
+               ('REJECT', 'reject')]
 
     customer = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
@@ -78,5 +111,33 @@ class OrderReturn(models.Model):
         return f"Request for the order return  № {self.id}"
 
     def confirm(self):
+        """
+        After the request confirmation:
+        1. Returns money to the customer.
+        2. The quantity of products returns to the previous values.
+        3. The order status becomes 'Cancelled'.
+        4. The object status becomes 'True' (Confirmed).
+        """
+
+        customer = self.customer
+        order = self.order
+        cart = order.cart
+        order_items = cart.items.all()
+
+        total_cost = cart.calculate_sum()
+        customer.add_money(total_cost)
+
+        for item in order_items:
+            product = item.product
+            quantity = item.quantity
+            product.increase_quantity(quantity)
+
+        order.cancel()
+
         self.status = True
         self.save()
+
+    def reject(self):
+        """Removes the return order instance if the request is rejected"""
+
+        self.delete()
