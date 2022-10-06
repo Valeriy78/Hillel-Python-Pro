@@ -7,7 +7,7 @@
     <h2>{{ object }}</h2>
     <p><b>created at:</b> {{ object.created_at }}</p>
     <p><b>order number:</b> {{object.order}}</p>
-    <p><b>customer:</b> {{object.customer}}</p>
+    <p><b>customer:</b> {{object.order.cart.customer}}</p>
     <br>
     <h3>Products:</h3>
     <ul>

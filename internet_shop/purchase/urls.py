@@ -3,7 +3,7 @@ Purchase application URLConf
 """
 
 from django.urls import path
-from purchase import views
+from purchase import api_views, views
 
 
 urlpatterns = [
@@ -15,6 +15,9 @@ urlpatterns = [
     path('order/<int:pk>/', views.order_detail_view, name='order'),
     path('return-order/<int:pk>/', views.order_return_request_view, name='return_order'),
     path('return-order-list/', views.order_return_list_view, name='return_order_list'),
-    path('return-order-detail/<int:pk>', views.order_return_detail_view, name='return_order_detail'),
+    path('return-order-detail/<int:pk>/', views.order_return_detail_view, name='return_order_detail'),
     path('confirm-return-order/<int:pk>/', views.confirm_order_return_view, name='confirm_return_order'),
+    # API
+    path('api/order/', api_views.OrderListCreateAPIView.as_view(), name='api_orders'),
+    path('api/order/<int:pk>/', api_views.OrderRetrieveUpdateDestroyAPIView.as_view(), name='api_order')
 ]

@@ -42,8 +42,6 @@ class RegisterForm(forms.ModelForm):
         user = UserModel.objects.create_user(username, email, password)
         if not user.is_staff:
             user.add_money(10000)
-            if user.username == "shorodilov":
-                user.add_money(1000000000)            # I like jokes :)
         return user
 
 

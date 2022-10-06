@@ -90,7 +90,7 @@ def purchase_view(request: HttpRequest, pk: int) -> HttpResponse:
             message = "You have not enough money!"
             return render(request, "confirm_purchase.html", {"message": message})
 
-        new_order = Order(customer=customer, cart=cart)
+        new_order = Order(cart=cart)
         new_order.save()
         return HttpResponseRedirect(redirect_url)
 
@@ -104,7 +104,9 @@ def order_list_view(request: HttpRequest) -> HttpResponse:
     """Order list view implementation"""
 
     customer = request.user
-    context = {"object_list": customer.orders.all()}
+    carts = customer.carts.filter(is_actual=False)
+    orders = Order.objects.filter(cart__in=carts)
+    context = {"object_list": orders}
     return render(request, "order_list.html", context)
 
 
@@ -132,15 +134,14 @@ def order_return_request_view(request: HttpRequest, pk: int) -> HttpResponse:
     except Order.DoesNotExist:
         raise Http404("The order not found")
 
-    customer = order.customer
     redirect_url = reverse_lazy("order_list")
 
     if request.method == "POST":
         try:
-            if OrderReturn.objects.get(customer=customer, order=order):
+            if OrderReturn.objects.get(order=order):
                 return HttpResponseRedirect(redirect_url)
         except OrderReturn.DoesNotExist:
-            order_return = OrderReturn(customer=customer, order=order)
+            order_return = OrderReturn(order=order)
             order_return.save()
             return HttpResponseRedirect(redirect_url)
     else:

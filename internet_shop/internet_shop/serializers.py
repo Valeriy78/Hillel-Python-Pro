@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from my_shop.models import Category, Product
@@ -29,22 +30,6 @@ class UserModelSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CartSerializer(serializers.ModelSerializer):
-    """Shopping cart serializer implementation"""
-
-    class Meta:
-        model = Cart
-        fields = "__all__"
-
-
-class CartItemSerializer(serializers.ModelSerializer):
-    """Cart item serializer implementation"""
-
-    class Meta:
-        model = CartItem
-        fields = "__all__"
-
-
 class OrderSerializer(serializers.ModelSerializer):
     """Order serializer implementation"""
 
@@ -52,3 +37,19 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = "__all__"
 
+    def validate_cart(self, cart):
+        """
+        Check if the shopping cart is empty.
+        Check if the customer has enough money.
+        """
+
+        if not self.instance:
+            cart_items = cart.items.all()
+            if cart_items.count() == 0:
+                raise serializers.ValidationError("Cart is empty")
+
+            total_cost = cart.calculate_sum()
+            if total_cost > cart.customer.money:
+                raise serializers.ValidationError("Customer has not enough money!")
+
+        return cart

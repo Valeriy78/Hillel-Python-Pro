@@ -53,7 +53,6 @@ class Order(models.Model):
         ('CANCELLED', 'Cancelled'),
         ('DONE', 'Done')
     )
-    customer = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="orders")
     cart = models.OneToOneField(Cart, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=13, choices=PURCHASE_STATUS_CHOICES, default='IN PROCESSING')
@@ -78,7 +77,7 @@ class Order(models.Model):
 
         if not self.id:
             cart = self.cart
-            customer = self.customer
+            customer = self.cart.customer
             cart_items = cart.items.all()
 
             total_cost = cart.calculate_sum()
@@ -102,7 +101,6 @@ class OrderReturn(models.Model):
     CHOICES = [('CONFIRM', 'confirm'),
                ('REJECT', 'reject')]
 
-    customer = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
@@ -119,9 +117,9 @@ class OrderReturn(models.Model):
         4. The object status becomes 'True' (Confirmed).
         """
 
-        customer = self.customer
         order = self.order
         cart = order.cart
+        customer = cart.customer
         order_items = cart.items.all()
 
         total_cost = cart.calculate_sum()
