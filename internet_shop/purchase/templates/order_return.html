@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} {{ object }} {% endblock %}
+
+{% block container %}
+
+    <h2>{{ object }}</h2>
+    <p><b>created at:</b> {{ object.created_at }}</p>
+    <p><b>order number:</b> {{object.order}}</p>
+    <p><b>customer:</b> {{object.order.cart.customer}}</p>
+    <br>
+    <h3>Products:</h3>
+    <ul>
+        {% for item in items %}
+            <li>
+                {{ item }} ( <b>{{ item.quantity }}</b> )
+            </li>
+        {% endfor %}
+    </ul>
+    <br><br>
+    <a href="{% url 'confirm_return_order' object.id %}">Confirm or reject</a>
+
+{% endblock %}

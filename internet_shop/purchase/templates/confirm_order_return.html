@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %} Confirmation of the order return request {% endblock %}
+
+{% block container %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div><b>Confirm or reject the request for the order return</b></div><br>
+        {{ form.as_p }}
+        <input type="submit" value="Submit" style="padding: 10px; font-size: medium">
+    </form>
+
+{% endblock %}
