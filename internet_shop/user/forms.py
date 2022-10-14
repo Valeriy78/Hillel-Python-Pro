@@ -39,7 +39,10 @@ class RegisterForm(forms.ModelForm):
         username = self.cleaned_data["username"]
         email = self.cleaned_data["email"]
         password = self.cleaned_data["password"]
-        UserModel.objects.create_user(username, email, password)
+        user = UserModel.objects.create_user(username, email, password)
+        if not user.is_staff:
+            user.add_money(10000)
+        return user
 
 
 class LoginForm(forms.ModelForm):

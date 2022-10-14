@@ -8,5 +8,12 @@
     <p><b>First_name: </b>{{user.first_name}}</p>
     <p><b>Last_name: </b>{{user.last_name}}</p>
     <p><b>Email: </b>{{user.email}}</p>
+    <p><b>Available funds: </b>{{user.money}}</p>
     <a href="{% url 'profile_edit' %}">Edit</a>
+    <br><br><br>
+    {% if user.is_staff %}
+        <a href="{% url 'return_order_list' %}">Requests for the order return</a>
+    {% else %}
+        <a href="{% url 'order_list' %}">Orders</a>
+    {% endif %}
 {% endblock %}

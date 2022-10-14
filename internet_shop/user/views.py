@@ -7,8 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_http_methods
 
 from .forms import RegisterForm, LoginForm, ProfileEditForm
+from purchase.models import Cart
 
 
 @login_required(login_url=reverse_lazy("login"))
@@ -18,13 +20,17 @@ def user_profile(request: HttpRequest) -> HttpResponse:
     return render(request, "user.html")
 
 
+@require_http_methods(["GET", "POST"])
 def register_view(request: HttpRequest) -> HttpResponse:
     """Register user view"""
 
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.create_user()
+            new_user = form.create_user()
+            if not new_user.is_staff:
+                cart = Cart(customer=new_user)
+                cart.save()
             return HttpResponseRedirect(reverse_lazy("login"))
     else:
         form = RegisterForm()
@@ -32,6 +38,7 @@ def register_view(request: HttpRequest) -> HttpResponse:
     return render(request, "register.html", {"form": form})
 
 
+@require_http_methods(["GET", "POST"])
 def login_view(request: HttpRequest) -> HttpResponse:
     """Login user view"""
 
@@ -64,6 +71,7 @@ def deactivate_view(request: HttpRequest) -> HttpResponse:
     return HttpResponseRedirect(reverse_lazy("homepage"))
 
 
+@require_http_methods(["GET", "POST"])
 @login_required(login_url=reverse_lazy("login"))
 def profile_edit_view(request: HttpRequest) -> HttpResponse:
     """Edit user profile"""
