@@ -14,7 +14,7 @@
         <input type="submit" value="Select">
     </form>
 
-    {% if user.is_authenticated %}
+    {% if user.is_staff %}
         <br><b><a href="{% url 'create_product' %}">Create new product</a></b>
         <br><br><b><a href="{% url 'create_category' %}">Create new category</a></b>
     {% endif %}
@@ -30,5 +30,12 @@
             </li>
         {% endfor %}
     </ul>
+
+    {% if user.is_authenticated and not user.is_staff %}
+        <br><br>
+        <form action="{% url 'cart_list' %}">
+            <input type="submit" value="Cart" style="padding: 10px; font-size: medium">
+        </form>
+    {% endif %}
 
 {% endblock %}

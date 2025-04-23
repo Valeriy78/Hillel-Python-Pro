@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %} Buy {% endblock %}
+
+{% block container %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div>Do you want to buy the products?</div>
+        <div>Do you confirm?</div><br>
+        <input type="submit" value="Buy" style="padding: 10px; font-size: medium">
+        <a href="{% url 'cart_list' %}">Cancel</a>
+    </form>
+    <p><h3>{{message}}</h3></p>
+
+{% endblock %}

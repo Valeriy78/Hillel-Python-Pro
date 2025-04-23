@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'my_shop.apps.MyShopConfig',
     'user.apps.UserConfig',
+    'purchase.apps.PurchaseConfig',
 ]
 
 MIDDLEWARE = [

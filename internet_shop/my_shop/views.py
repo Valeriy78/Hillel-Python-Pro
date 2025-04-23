@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .models import Product, Category
+from internet_shop.mixins import IsStaffMixin
 
 
 class ProductListView(ListView):
@@ -42,7 +43,7 @@ class ProductDetailView(DetailView):
     template_name = "product.html"
 
 
-class ProductCreateView(LoginRequiredMixin, CreateView):
+class ProductCreateView(IsStaffMixin, CreateView):
     """Product create view implementation"""
 
     http_method_names = "get", "post"
@@ -55,7 +56,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ProductUpdateView(LoginRequiredMixin, UpdateView):
+class ProductUpdateView(IsStaffMixin, UpdateView):
     """Product update view implementation"""
 
     http_method_names = "get", "post"
@@ -64,7 +65,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "product_form.html"
 
 
-class ProductDeleteView(LoginRequiredMixin, DeleteView):
+class ProductDeleteView(IsStaffMixin, DeleteView):
     """Product delete view implementation"""
 
     http_method_names = "get", "post"
@@ -73,7 +74,7 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("homepage")
 
 
-class CategoryCreateView(LoginRequiredMixin, CreateView):
+class CategoryCreateView(IsStaffMixin, CreateView):
     """Category create view implementation"""
 
     http_method_names = "get", "post"
